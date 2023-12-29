@@ -1,15 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import InputBox from "./components/InputBox";
-import useCurrencyInfo from "./hooks/useCurrencyinfo";
+// import useCurrencyInfo from "./hooks/useCurrencyinfo";
 
 function App() {
   const [amount, setAmount] = useState(0);
   const [from, setFrom] = useState("usd");
   const [to, setTo] = useState("inr");
   const [convertedAmount, setConvertedAmount] = useState(0);
+  const [currencyInfo, setCurrencyInfo] = useState({});
 
-  const currencyInfo = useCurrencyInfo(from);
+  useEffect(() => {
+    let url = `https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/${from}.json`;
+    fetch(url)
+      .then((res) => res.json())
+      .then((res) => setCurrencyInfo(res[from]));
+    console.log("Api called", currencyInfo);
+  }, [from]);
+
+  // const currencyInfo = useCurrencyInfo(from);
+  // const options = Object.keys(currencyInfo);
   const options = Object.keys(currencyInfo);
 
   const swap = () => {
@@ -20,6 +30,7 @@ function App() {
   };
 
   const convert = () => {
+    // setConvertedAmount(amount * currencyInfo[to]);
     setConvertedAmount(amount * currencyInfo[to]);
   };
 
